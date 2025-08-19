@@ -1905,4 +1905,30 @@ internal class WrappingRuleTest {
             """.trimIndent()
         wrappingRuleAssertThat(code).hasNoLintViolations()
     }
+
+    @Test
+    fun `Given function with context parameter should not crash with NPE`() {
+        val code =
+            """
+            context(Fragment) fun processFragment(
+                param: String
+            ) {
+                // function body
+            }
+            """.trimIndent()
+        wrappingRuleAssertThat(code).hasNoLintViolations()
+    }
+
+    @Test
+    fun `Given function with context parameter and lambda argument should handle safely`() {
+        val code =
+            """
+            context(Fragment) fun processFragment(
+                callback: () -> Unit
+            ) {
+                callback()
+            }
+            """.trimIndent()
+        wrappingRuleAssertThat(code).hasNoLintViolations()
+    }
 }
