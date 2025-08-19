@@ -10,6 +10,7 @@ import com.pinterest.ktlint.rule.engine.core.api.ElementType.CALL_EXPRESSION
 import com.pinterest.ktlint.rule.engine.core.api.ElementType.CLOSING_QUOTE
 import com.pinterest.ktlint.rule.engine.core.api.ElementType.COMMA
 import com.pinterest.ktlint.rule.engine.core.api.ElementType.CONDITION
+import com.pinterest.ktlint.rule.engine.core.api.ElementType.CONTEXT_RECEIVER_LIST
 import com.pinterest.ktlint.rule.engine.core.api.ElementType.DESTRUCTURING_DECLARATION
 import com.pinterest.ktlint.rule.engine.core.api.ElementType.DOT
 import com.pinterest.ktlint.rule.engine.core.api.ElementType.EOL_COMMENT
@@ -213,6 +214,11 @@ public class WrappingRule :
         node: ASTNode,
         emit: (offset: Int, errorMessage: String, canBeAutoCorrected: Boolean) -> AutocorrectDecision,
     ) {
+        // Early return if node is part of a context parameter
+        if (node.isPartOf(CONTEXT_RECEIVER_LIST)) {
+            return
+        }
+        
         val closingElementType = MATCHING_RTOKEN_MAP[node.elementType]
         var newlineInBetween = false
         var parameterListInBetween = false
@@ -230,7 +236,10 @@ public class WrappingRule :
                     firstArg = it
                 }
                 it.elementType == closingElementType
-            }!!
+            }
+        
+        // Use safe navigation instead of !! to handle potential null
+        closingElement ?: return
         if (
             !newlineInBetween ||
             // keep { p ->
