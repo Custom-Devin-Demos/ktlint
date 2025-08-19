@@ -382,7 +382,7 @@ public class WrappingRule :
                 // insert \n after multi-line value
                 val nextSibling = c.nextSibling { !it.isWhiteSpace20 }
                 val hasDestructuringDeclarationAsLastValueParameter =
-                    c.isLastValueParameter() && c.firstChildNode.elementType == DESTRUCTURING_DECLARATION
+                    c.isLastValueParameter() && c.firstChildNode?.elementType == DESTRUCTURING_DECLARATION
                 if (
                     nextSibling?.elementType == COMMA &&
                     !hasDestructuringDeclarationAsLastValueParameter &&
